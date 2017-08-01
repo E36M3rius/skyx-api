@@ -1,0 +1,49 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  root /var/www/skyx/public;
+
+  # Add index.php to the list if you are using PHP
+  index index.php;
+
+  server_name skyx-api.mariusiordache.me;
+  #for dev use bellow
+  #server_name _;
+
+  location / {
+    # First attempt to serve request as file, then
+    # as directory, then fall back to displaying a 404.
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+  #
+  location ~ \.php$ {
+    # With php5-cgi alone:
+    fastcgi_pass 127.0.0.1:9000;
+    try_files $uri /index.php =404;
+ 	  fastcgi_split_path_info ^(.+\.php)(/.+)$;
+  	fastcgi_index index.php;
+  	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+  	include fastcgi_params;
+    # With php-fpm
+    #include snippets/fastcgi-php.conf;
+    #fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+  }
+}
